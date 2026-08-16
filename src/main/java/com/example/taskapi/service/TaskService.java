@@ -27,8 +27,8 @@ public class TaskService {
 	}
 
 	@Transactional
-	public Task createTask(String title, String description) {
-		return taskRepository.save(new Task(title, description));
+	public Task createTask(Task task) {
+		return taskRepository.save(task);
 	}
 
 	@Transactional
