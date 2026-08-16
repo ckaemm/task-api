@@ -1,9 +1,9 @@
 package com.example.taskapi.service;
 
+import com.example.taskapi.exception.TaskNotFoundException;
 import com.example.taskapi.model.Task;
 import com.example.taskapi.repository.TaskRepository;
 import java.util.List;
-import java.util.NoSuchElementException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -47,10 +47,9 @@ public class TaskService {
 	}
 
 	// Kayit bulunamadiginda tek karar noktasi.
-	// TaskNotFoundException eklenince sadece bu satir degisecek.
 	private Task findTaskOrThrow(Long id) {
 		return taskRepository.findById(id)
-				.orElseThrow(() -> new NoSuchElementException("Task bulunamadi: id=" + id));
+				.orElseThrow(() -> new TaskNotFoundException(id));
 	}
 
 }
