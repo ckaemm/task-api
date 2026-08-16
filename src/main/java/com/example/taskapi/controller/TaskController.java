@@ -5,6 +5,7 @@ import com.example.taskapi.dto.TaskResponse;
 import com.example.taskapi.mapper.TaskMapper;
 import com.example.taskapi.model.Task;
 import com.example.taskapi.service.TaskService;
+import jakarta.validation.Valid;
 import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -46,14 +47,14 @@ public class TaskController {
 	}
 
 	@PostMapping
-	public ResponseEntity<TaskResponse> createTask(@RequestBody TaskRequest request) {
+	public ResponseEntity<TaskResponse> createTask(@Valid @RequestBody TaskRequest request) {
 		Task entity = taskMapper.toEntity(request);
 		Task created = taskService.createTask(entity);
 		return ResponseEntity.status(HttpStatus.CREATED).body(taskMapper.toResponse(created));
 	}
 
 	@PutMapping("/{id}")
-	public ResponseEntity<TaskResponse> updateTask(@PathVariable Long id, @RequestBody TaskRequest request) {
+	public ResponseEntity<TaskResponse> updateTask(@PathVariable Long id, @Valid @RequestBody TaskRequest request) {
 		Task updated = taskService.updateTask(
 				id,
 				request.title(),
