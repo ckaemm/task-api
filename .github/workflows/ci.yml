@@ -22,5 +22,7 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
-      - name: Run tests
-        run: ./mvnw -B clean test
+      # package fazi lifecycle'da test fazindan sonra gelir; tek komut
+      # once testleri calistirir, sonra Spring Boot JAR'ini uretir.
+      - name: Build and test
+        run: ./mvnw -B clean package
