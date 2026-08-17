@@ -51,6 +51,14 @@
 			<artifactId>spring-boot-starter-webmvc</artifactId>
 		</dependency>
 
+		<!-- Spring Boot parent bu artifact'i yonetmez; surumu acikca belirtiyoruz.
+		     3.1.0, spring-boot-starter-parent 4.1.0 uzerine derlenmistir. -->
+		<dependency>
+			<groupId>org.springdoc</groupId>
+			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+			<version>3.1.0</version>
+		</dependency>
+
 		<dependency>
 			<groupId>com.h2database</groupId>
 			<artifactId>h2</artifactId>
