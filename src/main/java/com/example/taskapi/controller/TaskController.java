@@ -1,11 +1,15 @@
 package com.example.taskapi.controller;
 
+import com.example.taskapi.dto.ErrorResponse;
 import com.example.taskapi.dto.TaskRequest;
 import com.example.taskapi.dto.TaskResponse;
+import com.example.taskapi.dto.ValidationErrorResponse;
 import com.example.taskapi.mapper.TaskMapper;
 import com.example.taskapi.model.Task;
 import com.example.taskapi.service.TaskService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -48,7 +52,8 @@ public class TaskController {
 
 	@Operation(summary = "Verilen id'ye sahip gorevi dondurur")
 	@ApiResponse(responseCode = "200", description = "Gorev bulundu")
-	@ApiResponse(responseCode = "404", description = "Verilen id ile gorev bulunamadi")
+	@ApiResponse(responseCode = "404", description = "Verilen id ile gorev bulunamadi",
+			content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
 	@GetMapping("/{id}")
 	public ResponseEntity<TaskResponse> getTaskById(@PathVariable Long id) {
 		Task task = taskService.getTaskById(id);
@@ -57,7 +62,8 @@ public class TaskController {
 
 	@Operation(summary = "Yeni bir gorev olusturur")
 	@ApiResponse(responseCode = "201", description = "Gorev olusturuldu")
-	@ApiResponse(responseCode = "400", description = "Istek govdesi validation kurallarini saglamiyor")
+	@ApiResponse(responseCode = "400", description = "Istek govdesi validation kurallarini saglamiyor",
+			content = @Content(schema = @Schema(implementation = ValidationErrorResponse.class)))
 	@PostMapping
 	public ResponseEntity<TaskResponse> createTask(@Valid @RequestBody TaskRequest request) {
 		Task entity = taskMapper.toEntity(request);
@@ -67,8 +73,10 @@ public class TaskController {
 
 	@Operation(summary = "Verilen id'ye sahip gorevi gunceller")
 	@ApiResponse(responseCode = "200", description = "Gorev guncellendi")
-	@ApiResponse(responseCode = "400", description = "Istek govdesi validation kurallarini saglamiyor")
-	@ApiResponse(responseCode = "404", description = "Verilen id ile gorev bulunamadi")
+	@ApiResponse(responseCode = "400", description = "Istek govdesi validation kurallarini saglamiyor",
+			content = @Content(schema = @Schema(implementation = ValidationErrorResponse.class)))
+	@ApiResponse(responseCode = "404", description = "Verilen id ile gorev bulunamadi",
+			content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
 	@PutMapping("/{id}")
 	public ResponseEntity<TaskResponse> updateTask(@PathVariable Long id, @Valid @RequestBody TaskRequest request) {
 		Task updated = taskService.updateTask(
@@ -81,7 +89,8 @@ public class TaskController {
 
 	@Operation(summary = "Verilen id'ye sahip gorevi siler")
 	@ApiResponse(responseCode = "204", description = "Gorev silindi, govde dondurulmez")
-	@ApiResponse(responseCode = "404", description = "Verilen id ile gorev bulunamadi")
+	@ApiResponse(responseCode = "404", description = "Verilen id ile gorev bulunamadi",
+			content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
 	@DeleteMapping("/{id}")
 	public ResponseEntity<Void> deleteTask(@PathVariable Long id) {
 		taskService.deleteTask(id);
