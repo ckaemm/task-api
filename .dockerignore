@@ -1,0 +1,27 @@
+# target/ altindan SADECE calistirilabilir JAR gitsin.
+# Once her seyi disla, sonra JAR'i geri al.
+target/*
+!target/*.jar
+
+# Kaynak kod ve build araclari: image icinde derleme yapmiyoruz.
+src/
+.mvn/
+mvnw
+mvnw.cmd
+pom.xml
+
+# Versiyon kontrolu ve CI: image ile ilgisi yok.
+.git/
+.gitignore
+.gitattributes
+.github/
+
+# IDE ve dokumantasyon
+.idea/
+.vscode/
+*.iml
+HELP.md
+
+# Docker'in kendi dosyalari image icinde ise yaramaz.
+Dockerfile
+.dockerignore
