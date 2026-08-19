@@ -6,10 +6,22 @@ on:
   pull_request:
     branches: [ "feature/task-api" ]
 
+env:
+  # github.repository = "ckaemm/task-api" -> ghcr.io/ckaemm/task-api
+  # GHCR image adlari kucuk harf olmak zorundadir; owner adi zaten kucuk harf.
+  IMAGE_NAME: ghcr.io/${{ github.repository }}
+
 jobs:
   test:
     name: Build, Test & Docker Image (Java 21)
     runs-on: ubuntu-latest
+
+    # DIKKAT: permissions blogu yazildigi anda burada listelenmeyen TUM izinler
+    # "none" olur. Bu yuzden checkout'un ihtiyaci olan contents: read de acikca
+    # yazilmak zorunda; sadece packages: write yazarsak checkout kirilir.
+    permissions:
+      contents: read      # actions/checkout icin
+      packages: write     # GHCR'a push icin
 
     steps:
       - name: Checkout
@@ -31,7 +43,23 @@ jobs:
       # bu yuzden ayrica kurulum adimi gerekmez.
       # Bu adim package'dan SONRA gelmeli: Dockerfile target/*.jar bekliyor.
       - name: Build Docker image
-        run: docker build -t task-api:${{ github.sha }} .
+        run: docker build -t "$IMAGE_NAME:${{ github.sha }}" .
 
       - name: Show image
-        run: docker image ls task-api
+        run: docker image ls "$IMAGE_NAME"
+
+      # Login ve push yalnizca push olayinda calisir:
+      #  - Fork'lardan gelen PR'larda GITHUB_TOKEN zorla salt-okunurdur.
+      #  - PR'da github.sha, gercek bir commit degil, gecici merge commit'idir.
+      # PR'lar yine de Docker build adimindan gecer; sadece yayinlanmaz.
+      - name: Log in to GHCR
+        if: github.event_name == 'push'
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Push image to GHCR
+        if: github.event_name == 'push'
+        run: docker push "$IMAGE_NAME:${{ github.sha }}"
