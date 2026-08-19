@@ -8,7 +8,7 @@ on:
 
 jobs:
   test:
-    name: Build & Test (Java 21)
+    name: Build, Test & Docker Image (Java 21)
     runs-on: ubuntu-latest
 
     steps:
@@ -26,3 +26,12 @@ jobs:
       # once testleri calistirir, sonra Spring Boot JAR'ini uretir.
       - name: Build and test
         run: ./mvnw -B clean package
+
+      # Runner'da Docker daemon hazir gelir (Docker 28.x, ubuntu-24.04 image'i),
+      # bu yuzden ayrica kurulum adimi gerekmez.
+      # Bu adim package'dan SONRA gelmeli: Dockerfile target/*.jar bekliyor.
+      - name: Build Docker image
+        run: docker build -t task-api:${{ github.sha }} .
+
+      - name: Show image
+        run: docker image ls task-api
